@@ -3,6 +3,7 @@ import requests
 import json
 from time import time
 from urllib.parse import urlparse
+from block import Block
 
 
 class Blockchain:
@@ -12,8 +13,7 @@ class Blockchain:
         self.nodes = set()
 
         # Create the genesis block
-        self.create_block(previous_hash='1', proof=100)
-
+        self.add_to_chain(Block.genesis_block())
 
     def register_node(self, address):
         """
@@ -31,13 +31,12 @@ class Blockchain:
         else:
             raise ValueError('Invalid URL')
 
-
     def valid_chain(self, chain):
         """
         Determines if a given blockchain is valid
 
-        :param chain: A blockchain
-        :return: True if valid, False if not
+        :param chain: Blockchain
+        :return: True if valid
         """
 
         last_block = chain[0]
@@ -45,11 +44,8 @@ class Blockchain:
 
         while current_index < len(chain):
             block = chain[current_index]
-            print(f'{last_block}')
-            print(f'{block}')
-            print("\n-----------\n")
             # Check that the hash of the block is correct
-            last_block_hash = self.hash(last_block)
+            last_block_hash = Block.hash(last_block)
             if block['previous_hash'] != last_block_hash:
                 return False
 
@@ -95,28 +91,20 @@ class Blockchain:
 
         return False
 
-    def create_block(self, proof, previous_hash):
+    def add_to_chain(self, block):
         """
         Creates a new block in the blockchain
 
-        :param proof: The proof given by the Proof of Work algorithm
-        :param previous_hash: Hash of previous block
+        :param block: The block to be added to the chain
         :return: New block
         """
 
-        block = {
-            'index': len(self.chain) + 1,
-            'timestamp': time(),
-            'transactions': self.current_transactions,
-            'proof': proof,
-            'previous_hash': previous_hash or self.hash(self.chain[-1]),
-        }
+        self.chain.append(block.to_json())
 
         # Reset the current list of transactions
         self.current_transactions = []
 
-        self.chain.append(block)
-        return block
+        return block.to_json()
 
     def create_transaction(self, sender, recipient, amount):
         """
@@ -140,31 +128,19 @@ class Blockchain:
     def last_block(self):
         return self.chain[-1]
 
-    @staticmethod
-    def hash(block):
-        """
-        Creates a SHA-256 hash of a block
-
-        :param block: block
-        """
-
-        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
-        block_string = json.dumps(block, sort_keys=True).encode()
-        return hashlib.sha256(block_string).hexdigest()
-
     def proof_of_work(self, last_block):
         """
         Simple Proof of Work Algorithm:
 
          - Find a number p' such that hash(pp') contains leading 4 zeroes
          - Where p is the previous proof, and p' is the new proof
-         
+
         :param last_block: <dict> last block
         :return: <int> proof
         """
 
         last_proof = last_block['proof']
-        last_hash = self.hash(last_block)
+        last_hash = Block.hash(last_block)
 
         proof = 0
         while self.valid_proof(last_proof, proof, last_hash) is False:

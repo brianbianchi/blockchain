@@ -1,3 +1,5 @@
+from time import time
+from block import Block
 from blockchain import Blockchain
 from flask import Flask, jsonify, request
 from uuid import uuid4
@@ -27,8 +29,14 @@ def mine():
     )
 
     # Create block and add it to the chain
-    previous_hash = blockchain.hash(last_block)
-    block = blockchain.create_block(proof, previous_hash)
+    previous_hash = Block.hash(last_block)
+    block = blockchain.add_to_chain(Block(
+        len(blockchain.chain) + 1,
+        time(),
+        blockchain.current_transactions,
+        proof,
+        previous_hash
+    ))
 
     response = {
         'message': "New block created",
@@ -58,7 +66,8 @@ def create_transaction():
         return 'Missing values', 400
 
     # Create a new transaction
-    index = blockchain.create_transaction(values['sender'], values['recipient'], values['amount'])
+    index = blockchain.create_transaction(
+        values['sender'], values['recipient'], values['amount'])
 
     response = {'message': f'Transaction will be added to block {index}'}
     return jsonify(response), 201
@@ -84,7 +93,7 @@ def node_list():
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
     values = request.get_json()
-    
+
     nodes = values.get('nodes')
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
@@ -121,7 +130,8 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5000,
+                        type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 
