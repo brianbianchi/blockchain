@@ -1,5 +1,6 @@
 from time import time
 from block import Block
+from transaction import Transaction
 from blockchain import Blockchain
 from flask import Flask, jsonify, request
 from uuid import uuid4
@@ -22,11 +23,7 @@ def mine():
 
     # Receive a reward for finding the proof
     # The sender is "0" to signify that this node has mined a new coin
-    blockchain.create_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1,
-    )
+    blockchain.add_transaction(Transaction("0", node_identifier, 1))
 
     # Create block and add it to the chain
     previous_hash = Block.hash(last_block)
@@ -64,10 +61,8 @@ def create_transaction():
     required = ['sender', 'recipient', 'amount']
     if not all(k in values for k in required):
         return 'Missing values', 400
-
-    # Create a new transaction
-    index = blockchain.create_transaction(
-        values['sender'], values['recipient'], values['amount'])
+ 
+    index = blockchain.add_transaction(Transaction(values['sender'], values['recipient'], values['amount']))
 
     response = {'message': f'Transaction will be added to block {index}'}
     return jsonify(response), 201

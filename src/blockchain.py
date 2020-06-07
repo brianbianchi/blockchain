@@ -4,7 +4,7 @@ import json
 from time import time
 from urllib.parse import urlparse
 from block import Block
-
+from transaction import Transaction
 
 class Blockchain:
     def __init__(self):
@@ -106,7 +106,7 @@ class Blockchain:
 
         return block.to_json()
 
-    def create_transaction(self, sender, recipient, amount):
+    def add_transaction(self, transaction):
         """
         Creates a new transaction to go into the next mined block
 
@@ -116,11 +116,7 @@ class Blockchain:
         :return: The index of the Block that will hold this transaction
         """
 
-        self.current_transactions.append({
-            'sender': sender,
-            'recipient': recipient,
-            'amount': amount,
-        })
+        self.current_transactions.append(transaction.to_json())
 
         return self.last_block['index'] + 1
 

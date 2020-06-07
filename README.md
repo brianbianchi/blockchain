@@ -1,5 +1,7 @@
 # blockchain
 
+(Bitcoin white paper)[https://bitcoin.org/bitcoin.pdf]
+
 ### endpoints
 * `GET /chain`
   * returns blockchain
@@ -16,3 +18,7 @@
 * `GET /nodes/resolve`
   * compares local version of blockchain with other nodes
   * updates copy of blockchain if it is behind
+
+### to do
+* transaction signature
+* leveldb
