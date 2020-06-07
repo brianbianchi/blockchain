@@ -11,8 +11,6 @@ class Blockchain:
         self.current_transactions = []
         self.chain = []
         self.nodes = set()
-
-        # Create the genesis block
         self.add_to_chain(Block.genesis_block())
 
     def register_node(self, address):
@@ -26,7 +24,7 @@ class Blockchain:
         if parsed_url.netloc:
             self.nodes.add(parsed_url.netloc)
         elif parsed_url.path:
-            # Accepts an URL without scheme like '192.168.0.5:5000'.
+            # Accepts an URL without scheme like '192.168.0.5:5000'
             self.nodes.add(parsed_url.path)
         else:
             raise ValueError('Invalid URL')
@@ -101,7 +99,6 @@ class Blockchain:
 
         self.chain.append(block.to_json())
 
-        # Reset the current list of transactions
         self.current_transactions = []
 
         return block.to_json()
@@ -137,8 +134,8 @@ class Blockchain:
 
         last_proof = last_block['proof']
         last_hash = Block.hash(last_block)
-
         proof = 0
+
         while self.valid_proof(last_proof, proof, last_hash) is False:
             proof += 1
 

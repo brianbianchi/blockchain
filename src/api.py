@@ -6,7 +6,6 @@ from flask import Flask, jsonify, request
 from uuid import uuid4
 
 
-# Instantiate the node
 app = Flask(__name__)
 
 # Generate unique address for this node
@@ -22,7 +21,6 @@ def mine():
     proof = blockchain.proof_of_work(last_block)
 
     # Receive a reward for finding the proof
-    # The sender is "0" to signify that this node has mined a new coin
     blockchain.add_transaction(Transaction("0", node_identifier, 1))
 
     # Create block and add it to the chain

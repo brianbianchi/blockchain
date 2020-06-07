@@ -28,13 +28,3 @@ class Transaction:
         # Order dictionary to ensure consistent hashes
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
-
-    def sign(self, key):
-        """
-        
-        """
-
-    def is_valid(self):
-        """
-
-        """

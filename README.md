@@ -1,6 +1,6 @@
 # blockchain
 
-(Bitcoin white paper)[https://bitcoin.org/bitcoin.pdf]
+[Bitcoin white paper](https://bitcoin.org/bitcoin.pdf)
 
 ### endpoints
 * `GET /chain`

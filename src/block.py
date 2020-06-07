@@ -39,8 +39,3 @@ class Block:
         # Order dictionary to ensure consistent hashes
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
-
-    def mine(self, difficulty):
-        """
-        mine
-        """
